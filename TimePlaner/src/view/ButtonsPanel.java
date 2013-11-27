@@ -39,7 +39,7 @@ public class ButtonsPanel extends JPanel{
 		this.setBorder(new TitledBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY ), "Aktionen"));
 		
 		this.timeField = new JTextField(new TimeDocument(10), "", 5);
-		this.timeField.setEnabled(false);
+		this.timeField.setEditable(false);
 		this.timeField.setText("0:00");
 		
 		thisLayout.row().grid(new JLabel("")).add(new JLabel("Wochenstunden:"), 2).add(this.timeField);

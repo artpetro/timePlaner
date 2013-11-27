@@ -30,7 +30,9 @@ public class WeekPlanModel {
 	
 		int start = 23 * 60 + 59; 
 		int end = 0;
+		int newDay_end = -1;
 		int count = 0;
+		
 		
 		for (int i = 0; i < this.days.length; i++) {
 			
@@ -42,19 +44,31 @@ public class WeekPlanModel {
 			
 			if (!layers.isEmpty()) {
 				
-				if(layers.getFirst().getStart() < start) {
-					start = day.getLayers().getFirst().getStart();
-				}
-				
-				if(layers.getLast().getEnd() > end) {
-					end = day.getLayers().getLast().getEnd();
-				}
-				
+					if(layers.getFirst().getStart() < start) {
+						start = layers.getFirst().getStart();
+					}
+					
+					for (WorkingLayerModel wlm : layers) {
+						
+						if (wlm.getEnd() < wlm.getStart()) {
+							if (wlm.getEnd() > newDay_end) {
+								newDay_end = wlm.getEnd();
+							}
+						}
+						
+						if(wlm.getEnd() > end) {
+							end = wlm.getEnd();
+						}
+					}
 			}
 		}
 		
 		if(count == 0) {
 			start = 0;
+		}
+		
+		if (newDay_end >= 0) {
+			end = newDay_end;
 		}
 		
 		se[0] = start;
@@ -81,5 +95,23 @@ public class WeekPlanModel {
 		}
 		
 		return false;
+	}
+
+	public int getMinsCounter() {
+		
+		int mins = 0;
+
+		for (int i = 0; i < this.days.length; i++) {
+			
+			DayPlanModel day = days[i];
+			
+			LinkedList<WorkingLayerModel > layers = day.getLayers();
+			
+					
+			for (WorkingLayerModel wlm : layers) {
+				mins += wlm.getTimeCountInMins();
+			}
+		}
+		return mins;
 	}
 }

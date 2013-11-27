@@ -2,11 +2,13 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.FileNotFoundException;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import utils.PdfWriter;
+import view.FileSaveChooser;
 import view.MainView;
 
 public class PdfButtonListener implements ActionListener {
@@ -20,25 +22,16 @@ public class PdfButtonListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		
-		JFileChooser chooser;
-        
-        String dirpPfad = System.getProperty("user.home");
+		FileSaveChooser chooser = new FileSaveChooser(mainView, "pdf");
      
-        chooser = new JFileChooser(dirpPfad);
-        chooser.setDialogType(JFileChooser.SAVE_DIALOG);
-          
-        chooser.setDialogTitle("Speichern unter...");
-        chooser.setSelectedFile(new File(mainView.getTitle() + ".pdf"));
-        chooser.setVisible(true);
-
         int result = chooser.showSaveDialog(mainView);
 
         if (result == JFileChooser.APPROVE_OPTION) {
 
-            String filePfad = chooser.getSelectedFile().toString();
-            
             try {
-				PdfWriter.writePdf(this.mainView.getModell(), filePfad);
+				PdfWriter.writePdf(this.mainView, chooser.getFile());
+			} catch (FileNotFoundException e) {
+				JOptionPane.showMessageDialog(this.mainView, "Die Datei " + chooser.getFile().getName() + " wird von einem Programm verwendet! Speichern nicht möglich.", "Fehler beim Speichern", JOptionPane.ERROR_MESSAGE);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import model.WeekPlanModel;
 
@@ -15,37 +17,27 @@ import com.google.gson.Gson;
 
 public class JsonIO {
 	
-	public static boolean saveAs(String dirpPfad, WeekPlanModel wpm, MainView mainView) {
+	public static boolean saveAs(MainView mainView) {
 
-        JFileChooser chooser;
-        if (dirpPfad == null)
-        	dirpPfad = System.getProperty("user.home");
-        File file = new File(dirpPfad.trim());
-
-        chooser = new JFileChooser(dirpPfad);
-        chooser.setDialogType(JFileChooser.SAVE_DIALOG);
-          
-        chooser.setDialogTitle("Speichern unter...");
-        chooser.setSelectedFile(new File(mainView.getTitle() + ".json"));
-        chooser.setVisible(true);
+        WeekPlanModel wpm = mainView.getModell();
+		
+		FileSaveChooser chooser = new FileSaveChooser(mainView, "dat");
 
         int result = chooser.showSaveDialog(mainView);
 
         if (result == JFileChooser.APPROVE_OPTION) {
 
-            String filePfad = chooser.getSelectedFile().toString();
-            file = new File(filePfad);
-            
-            FileWriter fw;
-			try {
-				fw = new FileWriter(file.getAbsoluteFile());
+        	File file = chooser.getFile();
+	        FileWriter fw;
+	        
+	        try {
 			
- 			 BufferedWriter bw = new BufferedWriter(fw);
- 			
- 			 Gson json = new Gson();
+	        	fw = new FileWriter(file.getAbsoluteFile());
+	        	BufferedWriter bw = new BufferedWriter(fw);
+	        	Gson json = new Gson();
  			 
- 			 bw.write(json.toJson(wpm));
- 			 bw.close();
+	        	bw.write(json.toJson(wpm));
+	        	bw.close();
  			 
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -53,6 +45,7 @@ public class JsonIO {
 
             chooser.setVisible(false);
             return true;
+ 
         }
         
         chooser.setVisible(false);
@@ -60,19 +53,21 @@ public class JsonIO {
     
 	} 
 	
-	public static WeekPlanModel load(String dirpPfad, MainView mainView) {
+	public static WeekPlanModel load(String dirPfad, MainView mainView) {
 		
 		WeekPlanModel wpm = null;
 
         JFileChooser chooser;
-        if (dirpPfad == null)
-        	dirpPfad = System.getProperty("user.home");
-        File file = new File(dirpPfad.trim());
+        if (dirPfad == null)
+        	dirPfad = System.getProperty("user.home");
+        File file = new File(dirPfad.trim());
 
-        chooser = new JFileChooser(dirpPfad);
+        chooser = new JFileChooser(dirPfad);
         chooser.setDialogType(JFileChooser.OPEN_DIALOG);
         
         chooser.setDialogTitle("Laden...");
+        FileFilter filter = new FileNameExtensionFilter("Dateien", "dat");
+        chooser.setFileFilter(filter);
         chooser.setVisible(true);
 
         int result = chooser.showOpenDialog(mainView);
@@ -81,6 +76,10 @@ public class JsonIO {
 
             String filePfad = chooser.getSelectedFile().toString();
             file = new File(filePfad);
+            dirPfad = chooser.getSelectedFile().getParent().toString();
+            mainView.setDirPath(dirPfad);
+            
+            
             
             BufferedReader br = null;
             Gson gson = new Gson();
@@ -92,7 +91,6 @@ public class JsonIO {
 				wpm = gson.fromJson(br, WeekPlanModel.class);
  			 
 			} catch (IOException e) {
-				// TODO errDialog
 				e.printStackTrace();
         	} finally {
 			

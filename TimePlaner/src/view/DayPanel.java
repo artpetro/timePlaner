@@ -69,7 +69,7 @@ public class DayPanel extends JPanel{
 			this.timeCountFields[i] = new JTextField(new TimeDocument(5), "", 5);
 			this.nameFields[i] = new JTextField(new NameDocument(20), "", 10);
 			
-			this.timeCountFields[i].setEnabled(false);
+			this.timeCountFields[i].setEditable(false);
 			this.timeCountFields[i].setText("0:00");
 			
 			thisLayout.row().grid(this.labels[i]).add(this.startSpinners[i]).add(this.endSpinners[i]).add(this.timeCountFields[i]).add(this.nameFields[i], 2);
@@ -82,7 +82,7 @@ public class DayPanel extends JPanel{
 		}
 		
 		this.timeCountFields[9] = new JTextField(new TimeDocument(10), "", 5);
-		this.timeCountFields[9].setEnabled(false);
+		this.timeCountFields[9].setEditable(false);
 		this.timeCountFields[9].setText("0:00");
 		
 		thisLayout.row().grid(new JLabel("ges")).add(new JLabel("")).add(new JLabel("")).add(this.timeCountFields[9]).add(new JLabel(""), 2);

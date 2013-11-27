@@ -1,19 +1,15 @@
 package utils;
 
-import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.LinkedList;
-
-import view.MainView;
 
 import model.DayPlanModel;
 import model.WeekPlanModel;
 import model.WorkingLayerModel;
+import view.MainView;
 
-import com.google.gson.Gson;
 import com.pdfjet.Box;
 import com.pdfjet.Font;
 import com.pdfjet.Letter;
@@ -24,26 +20,33 @@ import com.pdfjet.TextLine;
 
 public class PdfWriter {
 
-	public static void writePdf(WeekPlanModel model, String path) throws Exception {
+	public static void writePdf(MainView mainView, File file) throws FileNotFoundException, Exception {
+		
+		WeekPlanModel model = mainView.getModell();
 		
 		int[] se = model.getStartEndPeriod();
 
 		if (se[2] > 0) {
 			
-			FileOutputStream fos = new FileOutputStream(path);
+			FileOutputStream fos = new FileOutputStream(file);
 
-	        PDF pdf = new PDF(fos);
+	        PDF pdf;
+			
+			pdf = new PDF(fos);
+			
 
 	        // widht 590 height 800
 	        Page page = new Page(pdf, Letter.PORTRAIT);
 	        
-	        Box mainBox = new Box();
-	        mainBox.setPosition(60.0f, 40.0f);
-	        // TODO height depends layers.length
-	        float boxWidht = 490.0f;
-	        float boxHeight = 710.0f;
-	        mainBox.setSize(boxWidht, boxHeight);
+	        int[] white = {255, 255, 255};
+			int[] black = {0, 0, 0};
 	        
+	        Box mainBox = new Box();
+	        mainBox.setPosition(30.0f, 20.0f);
+	        float boxWidht = 550.0f;
+	        float boxHeight = 760.0f;
+	        mainBox.setSize(boxWidht, boxHeight);
+	        mainBox.setColor(white);
 	        mainBox.drawOn(page);
 	        
 	        // title
@@ -59,16 +62,24 @@ public class PdfWriter {
 	        titleLine.setText(title);
 	        titleLine.drawOn(page);
 	        
-	        // time lines
-	        // start later as and => new day
-	        if(model.isNewDay()) {
-	        	se[1] += 24 * 60;
-	        }   
-	        int hoursCount = Math.abs(se[1] - se[0]) / 60;
+	        System.out.println("start: "+se[0]);
+	        System.out.println("end: "+se[1]);
+	        System.out.println("layers:"+se[2]);	        
 	        
-	        if (Math.abs(se[1] - se[0]) % 60 > 0) {
-	        	hoursCount++;
+	        int hoursCount = 24;
+	      
+	        if (se[1] <= se[0] || model.isNewDay()) {	    	   
+	        	hoursCount = 24 - se[0] / 60 + se[1] / 60;	       
 	        }
+	       
+	        else {	    	
+	        	hoursCount = se[1] / 60 - se[0] / 60;	       
+	        }       
+	        if (se[1] % 60 > 0) {	    	
+	        	hoursCount++;       
+	        }
+	        
+	        System.out.println("hoursCount: " + hoursCount);
 	        
 	        float x_linesStart = 40;
 	        float x_linesEnd = 60;
@@ -77,8 +88,6 @@ public class PdfWriter {
 	        
 	        int hour = se[0] / 60;
 	        int startHour = hour;
-	        
-	        System.out.println(se[0]);
 	        
 	        float y_linesStart = 80.0f;
 	        float y_linesEnd = boxHeight - 20;
@@ -117,9 +126,6 @@ public class PdfWriter {
 	        float layerBoxLength;
 	        int layerCount = 0;
 
-			int[] white = {255, 255, 255};
-			int[] black = {0, 0, 0};
-	        
 			String dayTitle;
 			Font dayTitleFont;
 			TextLine dayTitleLine;
@@ -159,7 +165,7 @@ public class PdfWriter {
 	        			layerBoxLength = wlm.getTimeCountInMins() * hourLength / 60;
 	        			layerBox.setSize(layerBoxLength, layerBoxHeight);
 	        			
-	        			layerBox.placeIn(mainBox, ((wlm.getStart() / 60 - startHour) * hourLength) + x_linesStart, (layerBoxHeight + vertikalPadding) * layerCount + y_linesStart + vertikalPadding);
+	        			layerBox.placeIn(mainBox, ((wlm.getStart() / 60.0f - startHour) * hourLength) + x_linesStart, (layerBoxHeight + vertikalPadding) * layerCount + y_linesStart + vertikalPadding);
 	        			
 	        			layerBox.setColor(white);
 	        			layerBox.setFillShape(true);
@@ -170,16 +176,19 @@ public class PdfWriter {
 	        			layerBox.drawOn(page);
 	        			
 	        			// layer-time labels
-		        		int timeTitleSize = 10;
+		        		float timeTitleSize = 10.0f;
+		        		if (layerBoxHeight <= timeTitleSize) {
+		        			timeTitleSize = layerBoxHeight - 2.0f ;
+		        		}
 		        		y_layerTitle = (layerBoxHeight + vertikalPadding) * layerCount + y_linesStart + vertikalPadding * 2 + layerBoxHeight / 2;
 		        		timeStart = wlm.getStart();
 		        		timeEnd = wlm.getEnd();
-		    	        timeTitle = String.format("%d:%02d - %d:%02d", timeStart / 60, timeStart % 60, timeEnd / 60, timeEnd % 60);
+		    	        timeTitle = String.format("%02d:%02d - %02d:%02d", timeStart / 60, timeStart % 60, timeEnd / 60, timeEnd % 60);
 		    	        timeTitleFont = new Font(pdf, "Helvetica");
 		    	        timeTitleFont.setSize(timeTitleSize);
 		    	        timeTitleLine = new TextLine(timeTitleFont);
 		    	        timeTitleLine.placeIn(mainBox);
-		    	        timeTitleLine.setPosition(boxWidht - x_linesEnd + 5, y_layerTitle);
+		    	        timeTitleLine.setPosition(boxWidht - x_linesEnd + 80 - timeTitle.length() * timeTitleSize/2, y_layerTitle);
 		    	        
 		    	        timeTitleLine.setText(timeTitle);
 		    	        timeTitleLine.drawOn(page);
@@ -190,7 +199,7 @@ public class PdfWriter {
 		    	        timeTitleFont.setSize(timeTitleSize);
 		    	        timeTitleLine = new TextLine(timeTitleFont);
 		    	        timeTitleLine.placeIn(layerBox);
-		    	        timeTitleLine.setPosition((layerBoxLength - (timeTitle.length() * timeTitleSize/2))/2, layerBoxHeight - timeTitleSize / 2);
+		    	        timeTitleLine.setPosition(Math.abs(layerBoxLength - (timeTitle.length() * timeTitleSize/2))/2, layerBoxHeight - Math.max((layerBoxHeight - timeTitleSize)/2, 1));
 		    	        
 		    	        timeTitleLine.setText(timeTitle);
 		    	        timeTitleLine.drawOn(page);
@@ -203,50 +212,29 @@ public class PdfWriter {
 	        	}
 	        }
 	        
+	        // foot line
+	        int footerSize = 10;
+	        int mins = model.getMinsCounter();
+	        String footer = String.format("Schichtplanung V. 1.0 - RS Gastronomie GmbH & Co.KG, Herford - gesamte Stunden: %d:%02d",mins / 60, mins % 60);
+	        
+	        Font footerFont = new Font(pdf, "Helvetica");
+	        footerFont.setSize(footerSize);
+	        TextLine footerLine = new TextLine(footerFont);
+	        footerLine.setPosition((Letter.PORTRAIT[0] - (footer.length() * footerSize/2))/2, 20 + boxHeight);
+	        
+	        footerLine.setText(footer);
+	        footerLine.drawOn(page);
+	        
+	        
 	        pdf.flush();
 	        fos.close();
 	        
 	        Runtime rt = Runtime.getRuntime();
         	try{
-        		@SuppressWarnings("unused")
-        		Process p = rt.exec( "rundll32" +" " + "url.dll,FileProtocolHandler" + " " + path);
+        		rt.exec( "rundll32" +" " + "url.dll,FileProtocolHandler" + " " + file);
         	}catch (Exception e1){
         		e1.printStackTrace();
         	}
 		}
 	}
-	
-	public static void main(String[] args) {
-		
-		File file = new File(System.getProperty("user.home")+"\\Schichtpan für 01.01.2013.json");
-       
-        BufferedReader br = null;
-        Gson gson = new Gson();
-        WeekPlanModel wpm = null;
-        
-		try {
-
-			br = new BufferedReader(new FileReader(file.getAbsoluteFile()));
-
-			wpm = gson.fromJson(br, WeekPlanModel.class);
-			 
-		} catch (IOException e) {
-			e.printStackTrace();
-    	} finally {
-    		try {
-    			if (br != null)br.close();
-    		} catch (IOException ex) {
-    			ex.printStackTrace();
-    		}
-    	}
-		
-		
-		try {
-			writePdf(wpm, "Example_01.pdf");
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-		}
-	}
-
 }

@@ -1,6 +1,8 @@
 package view;
 
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.prefs.Preferences;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -30,14 +32,18 @@ public class MainView extends JFrame {
 	public static final String[] days = {"Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"}; 
 	
 	public MainView() {
+
+		Preferences user = Preferences.userRoot();
 		
-		this.dirPath = null;
+		this.dirPath = user.get("timePlanerDirPath", System.getProperty("user.home"));
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		this.setLocationRelativeTo(null);
 		
-		this.setSize(1280, 720);
-
+		final Dimension d = this.getToolkit().getScreenSize();
+		this.setSize((int)Math.min(1800, d.getWidth()), (int)Math.min(800, d.getHeight()));
+		this.setLocation((int) ((d.getWidth() - this.getWidth()) / 2), (int) ((d.getHeight() - this.getHeight()) / 2));
+	    this.setExtendedState(JFrame.MAXIMIZED_BOTH);  
+		
 		// header panel
 		this.headerPanel = new HeaderPanel();
 		
@@ -92,6 +98,10 @@ public class MainView extends JFrame {
 	
 	public void setDirPath(String path) {
 		this.dirPath = path;
+
+		Preferences user = Preferences.userRoot();
+		user.put("timePlanerDirPath", path);
+		
 	}
 	
 	
@@ -137,5 +147,5 @@ public class MainView extends JFrame {
 	public String getTitle() {
 		return this.headerPanel.getTitle();
 	}
-	
+
 }
