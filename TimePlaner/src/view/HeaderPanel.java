@@ -24,7 +24,7 @@ public class HeaderPanel extends JPanel{
 		
 		DesignGridLayout thisLayout = new DesignGridLayout(this);
 		
-		this.setBorder(new TitledBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY ), "Schichtplanung V. 1.0 - RS Gastronomie GmbH & Co.KG, Herford"));
+		this.setBorder(new TitledBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY ), "Schichtplanung V. 1.1 - RS Gastronomie GmbH & Co.KG, Herford"));
 		
 		this.titleTextField = new JTextField(new NameDocument(100), "", 100);
 		

@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import model.DayPlanModel;
 import model.WeekPlanModel;
 import model.WorkingLayerModel;
+import view.DayPanel;
 import view.MainView;
 
 import com.pdfjet.Box;
@@ -62,10 +63,6 @@ public class PdfWriter {
 	        titleLine.setText(title);
 	        titleLine.drawOn(page);
 	        
-	        System.out.println("start: "+se[0]);
-	        System.out.println("end: "+se[1]);
-	        System.out.println("layers:"+se[2]);	        
-	        
 	        int hoursCount = 24;
 	      
 	        if (se[1] <= se[0] || model.isNewDay()) {	    	   
@@ -78,8 +75,6 @@ public class PdfWriter {
 	        if (se[1] % 60 > 0) {	    	
 	        	hoursCount++;       
 	        }
-	        
-	        System.out.println("hoursCount: " + hoursCount);
 	        
 	        float x_linesStart = 40;
 	        float x_linesEnd = 60;
@@ -215,14 +210,27 @@ public class PdfWriter {
 	        // foot line
 	        int footerSize = 10;
 	        int mins = model.getMinsCounter();
-	        String footer = String.format("Schichtplanung V. 1.0 - RS Gastronomie GmbH & Co.KG, Herford - gesamte Stunden: %d:%02d",mins / 60, mins % 60);
+	        
+	        String times = "";
+	        DayPanel[] dps = mainView.getDayPanels();
+	        
+	        for (int i = 0; i < 7; i++) {
+	        	times += MainView.days[i].substring(0, 2) + ": " + dps[i].getTimeCountField(9).getText() + ", ";
+	        }
+	        
+	        times += String.format("Woche: %d:%02d", mins / 60, mins % 60);
+	        String footer = "Schichtplanung V. 1.1 - RS Gastronomie GmbH & Co.KG, Herford";
 	        
 	        Font footerFont = new Font(pdf, "Helvetica");
 	        footerFont.setSize(footerSize);
 	        TextLine footerLine = new TextLine(footerFont);
-	        footerLine.setPosition((Letter.PORTRAIT[0] - (footer.length() * footerSize/2))/2, 20 + boxHeight);
+	        
+	        footerLine.setText(times);
+	        footerLine.setPosition((Letter.PORTRAIT[0] - (times.length() * footerSize/2))/2, 15 + boxHeight);
+	        footerLine.drawOn(page);
 	        
 	        footerLine.setText(footer);
+	        footerLine.setPosition((Letter.PORTRAIT[0] - (footer.length() * footerSize/2))/2, 25 + boxHeight);
 	        footerLine.drawOn(page);
 	        
 	        

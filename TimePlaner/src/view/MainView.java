@@ -148,4 +148,8 @@ public class MainView extends JFrame {
 		return this.headerPanel.getTitle();
 	}
 
+	public DayPanel[] getDayPanels() {
+		return this.dayPanels;
+	}
+
 }

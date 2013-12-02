@@ -202,6 +202,4 @@ public class DayPanel extends JPanel{
 		time.setText(timeMins/60 + ":" + String.format("%02d", timeMins%60));
 	
 	}
-	
-
 }
