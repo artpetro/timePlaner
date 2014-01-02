@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.Test;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -28,13 +29,16 @@ public class TestAdminUI {
 	private String language = "Deutsch";
 	private String description = "Beschreibung";
 	private String startDate = "2033-01-01";
+	private String endDate = "2033-01-22";
 	private int durationHours = 1;
 	private int durationMins = 30;
 	private String startTimeHours = "08";
 	private String startTimeMins = "30";
 	private String agent = "demo_capture_agent";
-	
+	private String willDeleted = "selected recording(s) will be deleted.";
 	private String notFound = "0 found";
+	
+	private String changed = "geändert";
 		
 //	@Test
 	public void testAdminLogIn() {
@@ -141,22 +145,170 @@ public class TestAdminUI {
 	}
 	
 //	@Test
-	// TODO
-	public void recordingsTabSortingPaging() {
+	public void recordingsTabSortingPagingAndBulkEdit() {
 		
 		driver = login();
 		
-		// recordings table
+		// add 15 new recordings (group of recordings, three weeks, 5 recordings per week)
 		WebDriverWait wait = new WebDriverWait(driver, 15);
+//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("scheduleButton")));
+//		
+//		WebElement scheduleBtn = driver.findElement(By.id("scheduleButton"));
+//		scheduleBtn.click();
+//		
+//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("common-data")));
+//
+//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("i18n_dist_label")));
+//		
+//		driver.findElement(By.id("multipleRecordings")).click();
+//		
+//		driver.findElement(By.id("title")).sendKeys(this.recordingName);
+//		driver.findElement(By.id("creator")).sendKeys(this.authorName);
+//		driver.findElement(By.id("seriesSelect")).sendKeys("test");
+//		
+//		driver.findElement(By.id("repeatMon")).click();
+//		driver.findElement(By.id("repeatTue")).click();
+//		driver.findElement(By.id("repeatThu")).click();
+//		driver.findElement(By.id("repeatWed")).click();
+//		driver.findElement(By.id("repeatFri")).click();
+//		
+//		driver.findElement(By.id("i18n_additional")).click();
+//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("contributor")));
+//		
+//		driver.findElement(By.id("contributor")).sendKeys(this.contributor);
+//		driver.findElement(By.id("subject")).sendKeys(this.subject);
+//		driver.findElement(By.id("language")).sendKeys(this.language);
+//		driver.findElement(By.id("description")).sendKeys(this.description);
+//		driver.findElement(By.id("copyright")).sendKeys(this.authorName);
+//		driver.findElement(By.id("recurDurationHour")).sendKeys(this.durationHours + "");
+//		driver.findElement(By.id("recurDurationMin")).sendKeys(this.durationMins + "");
+//		driver.findElement(By.id("recurStartTimeHour")).sendKeys(this.startTimeHours);
+//		driver.findElement(By.id("recurStartTimeMin")).sendKeys(this.startTimeMins);
+//		driver.findElement(By.id("recurAgent")).sendKeys(this.agent);
+//		
+//		WebElement startDateFiled = driver.findElement(By.id("recurStart"));
+//		startDateFiled.clear();
+//		startDateFiled.sendKeys(this.startDate);
+//		
+//		WebElement endDateFiled = driver.findElement(By.id("recurEnd"));
+//		endDateFiled.clear();
+//		endDateFiled.sendKeys(this.endDate);
+//		
+//		
+//		driver.findElement(By.id("submitButton")).click();
+//		
+//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("content-metadata")));
+//		
+//		// test for presence
+//		String title = driver.findElement(By.id("field-title")).findElement(By.className("fieldValue")).getText();
+//		assertEquals(title, this.recordingName);
+//		
+//		String fieldCreator = driver.findElement(By.id("field-creator")).findElement(By.className("fieldValue")).getText();
+//		assertEquals(fieldCreator, this.authorName);
+//		
+//		String fieldContributor = driver.findElement(By.id("field-contributor")).findElement(By.className("fieldValue")).getText();
+//		assertEquals(fieldContributor, this.contributor);
+//		
+//		String fieldSubject = driver.findElement(By.id("field-subject")).findElement(By.className("fieldValue")).getText();
+//		assertEquals(fieldSubject, this.subject);
+//		
+//		String fieldLanguage = driver.findElement(By.id("field-language")).findElement(By.className("fieldValue")).getText();
+//		assertEquals(fieldLanguage, this.language);
+//		
+//		String fieldDescripton = driver.findElement(By.id("field-description")).findElement(By.className("fieldValue")).getText();
+//		assertEquals(fieldDescripton, this.description);
+//
+//		driver.findElement(By.id("back_to_recordings")).click();
+		
+		
+		// TODO 
+//		// sorting tests
+//		// recordings table
+//		WebDriverWait wait = new WebDriverWait(driver, 15);
+//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("recordingsTable")));
+//		
+//		List<WebElement> elements = driver.findElements(By.cssSelector(".status-column-cell.ui-state-active"));
+//		
+//		WebElement sortTitle = driver.findElement(By.id("sortTitle"));
+//		sortTitle.click();
+		
+		
+		// bulk actions and delete recordings
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("recordingsTable")));
 		
-		List<WebElement> elements = driver.findElements(By.cssSelector(".status-column-cell.ui-state-active"));
+		driver.findElement(By.id("stats-upcoming")).click();
 		
-		WebElement sortTitle = driver.findElement(By.id("sortTitle"));
-		sortTitle.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("recordingsTable")));
+		
+		driver.findElement(By.id("pageSize")).sendKeys("20");
+		driver.findElement(By.id("pageSize")).sendKeys(Keys.RETURN);
+		
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("recordingsTable")));
+		
+		driver.findElement(By.linkText("Bulk Action")).click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("bulkActionPanel")));
+		
+		WebElement bulkActionSelect = driver.findElement(By.id("bulkActionSelect"));
+		WebElement cancelBulkAction = driver.findElement(By.id("cancelBulkAction"));
+		
+		assertNotNull(bulkActionSelect);
+		assertNotNull(cancelBulkAction);
+		
+//		// TODO edit metadata
+//		bulkActionSelect.sendKeys("Edit Metadata");
+//		bulkActionSelect.sendKeys(Keys.RETURN);
+//		
+//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("i18n_additional")));
+//		
+//		driver.findElement(By.id("i18n_additional")).click();
+		
+		
+		// bulk delete
+		driver.findElement(By.linkText("Bulk Action")).click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("bulkActionPanel")));
+		
+		bulkActionSelect = driver.findElement(By.id("bulkActionSelect"));
+		cancelBulkAction = driver.findElement(By.id("cancelBulkAction"));
+		
+		assertNotNull(bulkActionSelect);
+		assertNotNull(cancelBulkAction);
+		
+		bulkActionSelect.sendKeys("Delete Recordings");
+		bulkActionSelect.sendKeys(Keys.RETURN);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("bulkActionApply")));
+		
+		String deleted = driver.findElement(By.id("bulkActionApplyMessage")).getText();
+		
+		assertEquals(0 + " " + this.willDeleted, deleted);
+		
+		WebElement applyBtn = driver.findElement(By.id("applyBulkAction"));
+		WebElement cancelBtn = driver.findElement(By.id("cancelBulkAction"));
+		
+		assertNotNull(applyBtn);
+		assertNotNull(cancelBtn);
+		
+		// delete 5 recordings
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.linkText("Bulk Action")));
+		
+		List<WebElement> checkBoxes = driver.findElements(By.className("selectRecording"));
+		
+		assertTrue(checkBoxes.size() > 5);
+		
+		for (int i = 0; i < 5; i++) {
+				checkBoxes.get(i).click();
+		}
+		
+		deleted = driver.findElement(By.id("bulkActionApplyMessage")).getText();
+		
+		assertEquals(5 + " " + this.willDeleted, deleted);
+		
+		// click delete
+		// check Alert text
+		// delete
+		
+		// delete other recs
 		
 	}
-	
 	
 	@Test
 	public void recordingsTabAddAndDeleteSingleRecording() {
@@ -286,7 +438,7 @@ public class TestAdminUI {
 		logInLink.click();
 		
 		WebDriverWait wait = new WebDriverWait(driver, 15);
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("adminlink")));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("col1m")));
 		
 		WebElement adminLink = driver.findElement(By.id("adminlink"));
 		
