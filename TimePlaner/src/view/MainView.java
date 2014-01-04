@@ -29,6 +29,8 @@ public class MainView extends JFrame {
 	
 	private String dirPath;
 	
+	private static final String TITLE = "Schichtplanung V. 1.2 - RS Gastronomie GmbH & Co.KG, Herford";
+	
 	public static final String[] days = {"Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"}; 
 	
 	public MainView() {
@@ -42,7 +44,9 @@ public class MainView extends JFrame {
 		final Dimension d = this.getToolkit().getScreenSize();
 		this.setSize((int)Math.min(1800, d.getWidth()), (int)Math.min(800, d.getHeight()));
 		this.setLocation((int) ((d.getWidth() - this.getWidth()) / 2), (int) ((d.getHeight() - this.getHeight()) / 2));
-	    this.setExtendedState(JFrame.MAXIMIZED_BOTH);  
+//	    this.setExtendedState(JFrame.MAXIMIZED_BOTH);  
+	    
+	    this.setTitle(TITLE);
 		
 		// header panel
 		this.headerPanel = new HeaderPanel();
@@ -74,6 +78,7 @@ public class MainView extends JFrame {
 		this.mainPanel.add(daysPanel);
 		
 		this.add(new JScrollPane(this.mainPanel));
+		
 		this.setVisible(true);
 		
 	}
@@ -131,6 +136,7 @@ public class MainView extends JFrame {
 		
 	}
 	
+	
 	public void setModell(WeekPlanModel wpm) {
 		
 		this.headerPanel.setTitle(wpm.getTitle());
@@ -144,10 +150,7 @@ public class MainView extends JFrame {
 		}	
 	}
 	
-	public String getTitle() {
-		return this.headerPanel.getTitle();
-	}
-
+	
 	public DayPanel[] getDayPanels() {
 		return this.dayPanels;
 	}

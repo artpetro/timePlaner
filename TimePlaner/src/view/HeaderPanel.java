@@ -3,7 +3,6 @@ package view;
 import java.awt.Color;
 
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
@@ -24,11 +23,11 @@ public class HeaderPanel extends JPanel{
 		
 		DesignGridLayout thisLayout = new DesignGridLayout(this);
 		
-		this.setBorder(new TitledBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY ), "Schichtplanung V. 1.1 - RS Gastronomie GmbH & Co.KG, Herford"));
+		this.setBorder(new TitledBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY ), "Titel"));
 		
 		this.titleTextField = new JTextField(new NameDocument(100), "", 100);
 		
-		thisLayout.row().grid(new JLabel("Titel:")).add(this.titleTextField);
+		thisLayout.row().grid().add(this.titleTextField);
 		
 	}
 	
