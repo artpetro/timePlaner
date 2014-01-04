@@ -3,6 +3,8 @@ package utils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 
 import model.DayPlanModel;
@@ -219,7 +221,10 @@ public class PdfWriter {
 	        }
 	        
 	        times += String.format("Woche: %d:%02d", mins / 60, mins % 60);
-	        String footer = "Schichtplanung V. 1.1 - RS Gastronomie GmbH & Co.KG, Herford";
+	        
+	        SimpleDateFormat dateFormat = new SimpleDateFormat("d.MM.yyyy, H:mm");
+	        String date = dateFormat.format(new Date());
+	        String footer = MainView.TITLE + " - erstellt am " + date;
 	        
 	        Font footerFont = new Font(pdf, "Helvetica");
 	        footerFont.setSize(footerSize);

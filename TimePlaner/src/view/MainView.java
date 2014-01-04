@@ -29,7 +29,7 @@ public class MainView extends JFrame {
 	
 	private String dirPath;
 	
-	private static final String TITLE = "Schichtplanung V. 1.2 - RS Gastronomie GmbH & Co.KG, Herford";
+	public static final String TITLE = "Schichtplanung V. 1.2 - RS Gastronomie GmbH & Co.KG, Herford";
 	
 	public static final String[] days = {"Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"}; 
 	
